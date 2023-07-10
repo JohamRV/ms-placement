@@ -21,13 +21,12 @@ public class DataController {
 
     @GetMapping()
     public ResponseEntity prueba(){
-        String pruebaData = "API de prueba";
+        String pruebaData = "ms-placement levantado";
         return new ResponseEntity(pruebaData, HttpStatus.OK);
     }
 
     @GetMapping(value="worker-status", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity chooseWorker2(@RequestParam(value = "sort", required = false, defaultValue = "cpu") String sort){
-        //StringBuilder textoColeccion = new StringBuilder(urlMongo);
         try (MongoClient mongoClient = MongoClients.create(urlMongo)) {
             MongoDatabase database = mongoClient.getDatabase("monitoring_db");
             MongoCollection<Document> collection = database.getCollection("compute_data");
@@ -107,6 +106,11 @@ public class DataController {
             }
 
             return new ResponseEntity(sortedMap,HttpStatus.OK);
+
+        }catch (Exception e){
+            HashMap<String,String> dataError = new HashMap<>();
+            dataError.put("error","Fallo conexion a base de datos");
+            return new ResponseEntity<>(dataError,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
